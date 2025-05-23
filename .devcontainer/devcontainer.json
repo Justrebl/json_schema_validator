@@ -1,36 +1,55 @@
 {
-    "name": "Functions Quickstarts Codespace",
-    "dockerFile": "Dockerfile",
+    "name": "Serverless Containers",
+    "image": "mcr.microsoft.com/devcontainers/dotnet:8.0-jammy",
+  
+    "containerUser": "vscode",
+  
     "features": {
-      "azure-cli": "latest"
+        //Az CLI install
+        "azure-cli": {
+          "version":"latest"
+        },
+  
+        //Terraform + tflint install
+        "ghcr.io/devcontainers/features/terraform:latest":{ 
+          "version":"latest",
+          "tflint":"latest"
+        },
+
+        "ghcr.io/devcontainers/features/python:1":{
+          "version":"3.11",
+          "enableShared": true          
+        },
+  
+        // //Azure Function Core tools + Visual Studio Extension install
+        "ghcr.io/jlaundry/devcontainer-features/azure-functions-core-tools:1":{}
     },
+  
+    // Ports Forward config : 
+    // 7071 : Azure Function Debug Port
+    // 1000[0,1,2] : Azurite storage emulator used with Azure Function
+    "forwardPorts": [7071, 10000, 10001, 10002],
+  
     "customizations": {
       "vscode": {
         "extensions": [
-          "ms-azuretools.vscode-bicep",
-          "ms-azuretools.vscode-docker",
-          "ms-azuretools.vscode-azurefunctions",
-          "GitHub.copilot",
-          "humao.rest-client"
+          // Azurite : Storage Account Emulator for local Azure Function Debug
+          "azurite.azurite",
+          //.NET
+          "ms-dotnettools.csharp", 
+          "ms-dotnettools.csdevkit",      
+          "ms-dotnettools.vscodeintellicode-csharp",
+          //Python
+          "ms-python.python",
+          "ms-toolsai.jupyter",
+          "donjayamanne.python-extension-pack",
+          "ms-toolsai.vscode-jupyter-powertoys",
+          //Rest Client
+          "humao.rest-client",
+          // Terraform
+          "hashicorp.terraform"
         ]
       }
     },
-    "mounts": [
-      // Mount docker-in-docker library volume
-      "source=codespaces-linux-var-lib-docker,target=/var/lib/docker,type=volume"
-    ],
-    // Always run image-defined docker-init.sh to enable docker-in-docker
-    "overrideCommand": false,
-    "remoteUser": "codespace",
-    "runArgs": [
-      // Enable ptrace-based debugging for Go in container
-      "--cap-add=SYS_PTRACE",
-      "--security-opt",
-      "seccomp=unconfined",
-  
-      // Enable docker-in-docker configuration
-      "--init",
-      "--privileged"
-    ]
+    "remoteUser": "vscode"
   }
-  
